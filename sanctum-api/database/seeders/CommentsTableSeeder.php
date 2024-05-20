@@ -19,14 +19,14 @@ class CommentsTableSeeder extends Seeder
             [
                 'comment_body' => 'This is john comment',
                 'post_id' => 1,
-                'user_id' => 1,
+                'user_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'comment_body' => 'This is jericho comment.',
                 'post_id' => 2,
-                'user_id' => 2,
+                'user_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

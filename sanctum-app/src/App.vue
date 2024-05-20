@@ -11,7 +11,7 @@
         <div class="p-2 mx-4 nav-hover-logout " @click="$router.push('/mypost')">
           My Posts
         </div>
-        <div class="p-2 mx-4 nav-hover-logout "  @click="$router.push('/logout')">
+        <div class="p-2 mx-4 nav-hover-logout " @click="$router.push('/logout')">
           Logout
         </div>
       </div>
@@ -27,7 +27,7 @@ export default {
   name: 'App',
   data() {
     return {
-    user: localStorage.getItem("token") 
+      user: localStorage.getItem("token")
 
     }
   }

@@ -48,9 +48,10 @@ export default {
           // the token will be stored in the local storage to guard the routes
           // this will prevent to access the route without login
           localStorage.setItem('token', response.data.token);
+          localStorage.setItem('user', response.data.user.id);
           window.location.reload();
           this.$router.push('/home');
-      
+
         }
       } catch (error) {
         // Handle login error, show error message to the user

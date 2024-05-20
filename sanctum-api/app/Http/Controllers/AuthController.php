@@ -18,17 +18,19 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $validator = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
-        ], //custom validation error messages for password, email, and name 
-        [
-            'email.unique' => 'The email has already been taken.',
-            'password.min' => 'The password must be at least 6 characters.',
-            'password.confirmed' => 'The password confirmation does not match.',
-            'password.regex' => 'The password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.',
-        ]);
+        $validator = $request->validate(
+            [
+                'name' => 'required|string',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:6|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
+            ], //custom validation error messages for password, email, and name 
+            [
+                'email.unique' => 'The email has already been taken.',
+                'password.min' => 'The password must be at least 6 characters.',
+                'password.confirmed' => 'The password confirmation does not match.',
+                'password.regex' => 'The password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.',
+            ]
+        );
 
         // create a new user using the User model
         // User::create is pre-defined method in Laravel to create a new user by passing the request data
@@ -61,10 +63,16 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('token-name')->plainTextToken;
 
-            return response()->json(['token' => $token], 201);
+            return response()->json(['token' => $token, 'user' => $user], 201);
         }
 
         // Authentication failed
         return response()->json(['message' => 'Invalid username or password'], 401);
+    }
+
+    public function logout()
+    {
+        Auth::user()->tokens()->delete();
+        return response()->json(['message' => 'Logged out successfully'], 200);
     }
 }

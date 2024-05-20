@@ -12,11 +12,20 @@
                     <div class="text-muted">Author</div>
                 </CCardHeader>
                 <CCardBody>
-                    <CCardTitle>{{ posts.title }}</CCardTitle>
+                    <div class="d-flex justify-content-between">
+                        <CCardTitle>{{ posts.title }}</CCardTitle>
+                        <div v-if="posts.user.id == user_id" class="icon-trash-container">
+                            <CIcon class="icon-hover-trash" icon="cilBackspace" size="sm"
+                                @click="() => { visibleDelete = true }" />
+                        </div>
+                    </div>
                     <CCardText>{{ posts.body }}</CCardText>
-                    <div class="d-flex justify-content-end">
+                    <div class=" d-flex justify-content-end">
+                        <CButton v-if="posts.user.id == user_id" color="success" class="mx-2"
+                            @click="() => { visibleUpdate = true }"> Edit </CButton>
                         <CButton color="primary" @click="showComment = !showComment">Post comment</CButton>
                     </div>
+
                 </CCardBody>
                 <br>
                 <div v-if="showComment" class="row g-3 mx-2 ">
@@ -59,11 +68,44 @@
             </CToastBody>
         </CToast>
     </CToaster>
+
+
+    <CModal :visible="visibleUpdate" @close="() => { visibleUpdate = false }" aria-labelledby="LiveDemoExampleLabel">
+        <CModalHeader>
+            <CModalTitle id="LiveDemoExampleLabel">Edit Post</CModalTitle>
+        </CModalHeader>
+        <CModalBody class="d-flex flex-column gap-3">
+            <CFormInput v-model="updatepostdata.postTitle" type="text" id="inputTitle" placeholder="Edit Title" />
+            <CFormInput v-model="updatepostdata.postBody" type="text" id="inputBody" placeholder="Edit Body" />
+        </CModalBody>
+        <CModalFooter>
+            <CButton color="secondary" @click="() => { visibleUpdate = false }">
+                Close
+            </CButton>
+            <CButton color="primary" @click="updatePost(posts.id)">Save changes</CButton>
+        </CModalFooter>
+    </CModal>
+
+
+
+    <CModal :visible="visibleDelete" @close="() => { visibleDelete = false }" aria-labelledby="LiveDemoExampleLabel">
+        <CModalHeader>
+            <CModalTitle id="LiveDemoExampleLabel">Delete a post</CModalTitle>
+        </CModalHeader>
+        <CModalBody>Are you sure to delete this post?</CModalBody>
+        <CModalFooter>
+            <CButton color="secondary" @click="() => { visibleDelete = false }">
+                Close
+            </CButton>
+            <CButton color="danger" @click="deletePost(posts.id)">Delete</CButton>
+        </CModalFooter>
+    </CModal>
     <router-view />
 </template>
 
 <script>
 import axiosClient from '../../axios/axios-js';
+
 
 
 export default {
@@ -74,8 +116,15 @@ export default {
             posts: this.$store.state.selectedPost,
             comment_body: '',
             showComment: false,
+            visibleUpdate: false,
+            visibleDelete: false,
+            updatepostdata: {
+                postTitle: this.$store.state.updatepost.postTitle,
+                postBody: this.$store.state.updatepost.postBody
+            },
+            toasts: [],
+            user_id: this.$store.state.user_id
 
-            toast: []
         }
     },
     mounted() {
@@ -85,11 +134,35 @@ export default {
         }
     },
     methods: {
-        createToast() {
-            this.toast.push({
+        createToast(content) {
+            this.toasts.push({
                 title: 'Success',
-                content: 'Successfully posted a comment.',
+                content: `Successfully ${content}.`,
             })
+        },
+        updatePost(id) {
+
+            axiosClient.put(`/postsUpdate/${id}`, this.updatepostdata).then((res) => {
+                this.$store.state.selectedPost.title = this.updatepostdata.postTitle;
+                this.$store.state.selectedPost.body = this.updatepostdata.postBody;
+                this.visibleUpdate = false;
+                this.createToast('updated post');
+                console.log(res)
+            }).catch((err) => console.log(err));
+
+        },
+        deletePost(id) {
+
+            axiosClient.delete(`/postDelete/${id}`).then((res) => {
+                console.log(res.data);
+                this.$store.dispatch('getPost');
+                this.createToast('deleted post');
+                this.visibleDelete = false;
+                setTimeout(() => {
+                    this.$router.push('/home');
+                }, 2000);
+            }).catch((err) => console.log(err));
+
         },
         postComment() {
             const comment_data = {
@@ -99,11 +172,11 @@ export default {
 
 
             axiosClient.post('/commentPost', comment_data).then((res) => {
-                console.log(res.data.response)
+
                 this.$store.dispatch('getPost');
                 this.posts.comments.push(res.data.response);
-                console.log(this.posts.comments)
-                this.createToast();
+                this.createToast('commented to post');
+                this.showComment = false;
             }).catch((err) => console.log(err));
         },
 
@@ -112,3 +185,20 @@ export default {
 
 }
 </script>
+
+
+<style>
+.icon-trash-container {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+
+}
+
+.icon-hover-trash {
+    height: 20px;
+    width: 30px;
+    transition: color 0.3s;
+    color: red;
+}
+</style>

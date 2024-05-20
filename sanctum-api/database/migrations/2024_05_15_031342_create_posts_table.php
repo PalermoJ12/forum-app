@@ -13,13 +13,13 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->id(); // Creates an unsignedBigInteger primary key
+            $table->id(); 
             $table->string('title');
-            $table->text('body'); // Changed from string to text for larger content
-            $table->unsignedBigInteger('user_id'); // Foreign key must match the type of 'users' table primary key
+            $table->text('body');
+            $table->unsignedBigInteger('user_id'); 
             $table->timestamps();
 
-            // Setting up the foreign key constraint
+         
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 

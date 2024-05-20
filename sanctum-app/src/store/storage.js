@@ -8,6 +8,11 @@ const store = createStore({
       posts: {},
       selectedPost: {},
       myPost: {},
+      updatepost: {
+        postTitle: "",
+        postBody: "",
+      },
+      user_id: localStorage.getItem("user"),
     };
   },
   mutations: {
@@ -23,6 +28,7 @@ const store = createStore({
       axiosClient
         .get("/posts")
         .then((res) => {
+          console.log(res.data.posts);
           commit("setPosts", res.data.posts);
         })
         .catch((err) => console.log(err));

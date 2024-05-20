@@ -6,7 +6,7 @@ import HomePage from "../components/HomePage.vue";
 import MyPostPage from "../components/MyPostPage.vue";
 import ViewPost from "../components/ViewPost.vue";
 import CreatePost from "../components/CreatePost.vue";
-import UpdatePost from "../components/UpdatePost.vue";
+
 const routes = [
   {
     path: "/",
@@ -60,19 +60,6 @@ const routes = [
     },
   },
   {
-    path: "/editpost",
-    component: UpdatePost,
-    name: "editpost",
-    beforeEnter: (to, from, next) => {
-      // check if user is logged in and redirect to login page if not
-      if (localStorage.getItem("token")) {
-        next();
-      } else {
-        next("/");
-      }
-    },
-  },
-  {
     path: "/viewpost",
     component: ViewPost,
     name: "ViewPost",
@@ -92,6 +79,7 @@ const routes = [
     beforeEnter: (to, from, next) => {
       console.log("logout");
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       window.location.reload();
       next("/");
     },

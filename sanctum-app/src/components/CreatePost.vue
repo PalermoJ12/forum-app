@@ -62,7 +62,7 @@ export default {
                 this.$store.state.posts = res.data.posts;
                 setTimeout(() => {
                     this.$router.push('/home');
-                }, 3000);
+                }, 2000);
             }).catch((err) => console.log(err));
         },
     }

@@ -72,12 +72,19 @@ class PostController extends Controller
         }
     }
 
-    public function update(Request $request, Post $post)
+    public function update(Request $request, $id)
     {
         try {
-            $post->update([
-                'title' => $request->title,
-                'body' => $request->body
+
+            $post = Post::findOrFail($id);
+            $update = $post->update([
+                'title' => $request->postTitle,
+                'body' => $request->postBody
+            ]);
+
+            return response([
+                "status" => "Success",
+                "response" => $update
             ]);
         } catch (Exception $e) {
             return response([
@@ -87,10 +94,15 @@ class PostController extends Controller
     }
 
 
-    public function destroy(Post $post)
+    public function destroy($id)
     {
         try {
-            $post->delete();
+            Post::destroy($id);
+            return response([
+                "status" => "Success",
+                "response" => "Post Deleted"
+            ]);
+
         } catch (Exception $e) {
             return response([
                 "error" => $e->getMessage()

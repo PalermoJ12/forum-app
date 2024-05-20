@@ -43,6 +43,8 @@ export default {
   methods: {
     postComment(post) {
       this.$store.state.selectedPost = post;
+      this.$store.state.updatepost.postTitle = post.title;
+      this.$store.state.updatepost.postBody = post.body;
       this.$router.push('/viewpost');
     },
     formatDate(dateString) {

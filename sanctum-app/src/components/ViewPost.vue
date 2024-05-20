@@ -1,6 +1,6 @@
 <template>
 
-    <div class="d-flex flex-column align-items-center w-100 ">
+    <div class="d-flex flex-column align-items-center mt-4 w-100 ">
 
 
         <div v-if="posts" class="w-50">

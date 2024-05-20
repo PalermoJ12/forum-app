@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar">
-    <div v-if="user" class="w-100 p-3  d-flex  justify-content-between bg-dark">
+    <div v-if="user" class="w-100 p-3  d-flex  justify-content-between bg-body-tertiary">
       <div class="p-2 ms-4  nav-hover-title">
         Forum App
       </div>
@@ -36,7 +36,7 @@ export default {
 
 <style>
 .nav-hover-title {
-  color: aliceblue;
+  color: black;
   cursor: pointer;
 }
 
@@ -45,13 +45,13 @@ export default {
 }
 
 .nav-hover-logout {
-  color: aliceblue;
+  color: black;
   cursor: pointer;
 }
 
 .nav-hover-logout:hover {
-  background-color: aliceblue;
+  background-color: black;
   border-radius: 10%;
-  color: black;
+  color: white;
 }
 </style>

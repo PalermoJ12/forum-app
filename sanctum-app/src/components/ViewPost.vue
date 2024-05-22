@@ -28,21 +28,32 @@
           </div>
         </div>
         <div v-if="posts.comments">
-          <CCardFooter class="w-100">
-            <div class="w-100">Comments</div>
-            <div v-for="comment in posts.comments" :key="comment.id" class="mt-3 d-flex w-100 justify-content-between">
-              <div v-if="editingCommentId === comment.id">
-                <CFormInput v-model="comment.comment_body" />
-                <CButton color="primary" @click="saveComment(comment)">Save</CButton>
-                <CButton color="secondary" @click="cancelEdit(comment)">Cancel</CButton>
-              </div>
-              <div v-else>
-                <h6>{{ comment.comment_body }}</h6>
-                <div class="text-muted">{{ comment.user.name }}</div>
-                <CButton v-if="comment.user.id == user_id" color="success" @click="editComment(comment)">Edit</CButton>
-              </div>
-            </div>
-          </CCardFooter>
+            <CCardFooter class="w-100">
+                <div class="w-100">
+                    <b>Comments</b>
+                    <span v-if="posts.comments.length === 0" style="opacity: 0.7;"> - There are no comments on this post.</span>
+                </div>
+                <div v-for="(comment, index) in posts.comments" :key="comment.id" class="mt-3 d-flex w-100 justify-content-between align-items-center">
+                    <div v-if="editingCommentId === comment.id" class="d-flex flex-grow-1">
+                        <CFormInput v-model="comment.comment_body" class="me-2 flex-grow-1" placeholder="Please enter a comment." />
+                        <CButton color="primary" class="me-2" @click="saveEditedComment(comment)">Save</CButton>
+                        <CButton color="secondary" @click="cancelEdit(comment)">Cancel</CButton>
+                    </div>
+                    <div v-else class="d-flex justify-content-between align-items-center w-100" :style="{ borderBottom: index !== posts.comments.length - 1 ? '1px solid #dee2e6' : 'none' }">
+                        <b><span style="font-size: 25px;">👨🏻‍💼 </span></b>
+                        <div class="flex-grow-1">               
+                            <div class="text-muted">
+                                <b><span style="padding-left: 5px; font-size: 18px;"> {{ comment.user.name }}</span></b>
+                            </div>
+                            <h6 class="mb-1" style="padding-left: 5px; opacity: 0.7;"> {{ comment.comment_body }}</h6>
+                        </div>
+                        <div v-if="comment.user.id == user_id" class="ms-2 d-flex">
+                            <CButton color="primary" class="me-1" @click="editComment(comment)">✏️</CButton>
+                            <CButton color="danger" @click="deleteComment(comment)">🗑️</CButton>
+                        </div>
+                    </div>
+                </div>
+            </CCardFooter>
         </div>
       </CCard>
     </div>
@@ -152,6 +163,8 @@ export default {
     },
     editComment(comment) {
       this.editingCommentId = comment.id;
+      // Store the original comment body before editing
+      comment.original_comment_body = comment.comment_body;
     },
     saveComment(comment) {
       this.$store.dispatch('updateComment', comment).then(() => {
@@ -159,12 +172,23 @@ export default {
         this.createToast('updated comment');
       }).catch((err) => console.log(err));
     },
-    cancelEdit() {
+    cancelEdit(comment) {
       this.editingCommentId = null;
+      // Revert changes made to the comment body
+      comment.comment_body = comment.original_comment_body;
+    },
+    saveEditedComment(comment) {
+      if (comment.comment_body.trim() !== '') {
+        this.saveComment(comment);
+      } else {
+        console.log('Input field is empty. Cannot save.');
+      }
     }
   },
 };
 </script>
+
+
 
 <style scoped>
   .icon-hover-trash {

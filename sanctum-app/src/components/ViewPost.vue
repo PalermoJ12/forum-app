@@ -76,17 +76,20 @@
         </CModalHeader>
         <CModalBody class="d-flex flex-column gap-3">
             <CFormInput v-model="updatepostdata.postTitle" type="text" id="inputTitle" placeholder="Edit Title" />
+            <!-- Display validation message on empty title -->
+            <div v-if="!updatepostdata.postTitle" class="text-danger">Title is required</div>
             <CFormInput v-model="updatepostdata.postBody" type="text" id="inputBody" placeholder="Edit Body" />
+            <!-- Display validation message om empty body -->
+            <div v-if="!updatepostdata.postBody" class="text-danger">Body is required</div>
         </CModalBody>
         <CModalFooter>
             <CButton color="secondary" @click="() => { visibleUpdate = false }">
                 Close
             </CButton>
-            <CButton color="primary" @click="updatePost(posts.id)">Save changes</CButton>
+            <!-- Disable the button if any field is empty -->
+            <CButton color="primary" @click="updatePost(posts.id)" :disabled="!updatepostdata.postTitle || !updatepostdata.postBody">Save changes</CButton>
         </CModalFooter>
     </CModal>
-
-
 
     <CModal :visible="visibleDelete" @close="() => { visibleDelete = false }" aria-labelledby="LiveDemoExampleLabel">
         <CModalHeader>
@@ -105,9 +108,6 @@
 
 <script>
 import axiosClient from '../../axios/axios-js';
-
-
-
 export default {
 
     name: 'ViewPost',
@@ -123,7 +123,11 @@ export default {
                 postBody: this.$store.state.updatepost.postBody
             },
             toasts: [],
-            user_id: this.$store.state.user_id
+            user_id: this.$store.state.user_id,
+            validation: {
+                title: false,
+                body: false
+            }
 
         }
     },
@@ -137,23 +141,33 @@ export default {
         createToast(content) {
             this.toasts.push({
                 title: 'Success',
-                content: `Successfully ${content}.`,
+                content: Successfully ${content}.,
             })
         },
         updatePost(id) {
+            // Check for empty fields
+            if (!this.updatepostdata.postTitle || !this.updatepostdata.postBody) {
+                // Set validation flags
+                this.validation.title = !this.updatepostdata.postTitle;
+                this.validation.body = !this.updatepostdata.postBody;
+                return; // Exit method
+            }
 
-            axiosClient.put(`/postsUpdate/${id}`, this.updatepostdata).then((res) => {
+            // Reset validation flags
+            this.validation.title = false;
+            this.validation.body = false;
+
+            axiosClient.put(/postsUpdate/${id}, this.updatepostdata).then((res) => {
                 this.$store.state.selectedPost.title = this.updatepostdata.postTitle;
                 this.$store.state.selectedPost.body = this.updatepostdata.postBody;
                 this.visibleUpdate = false;
                 this.createToast('updated post');
                 console.log(res)
             }).catch((err) => console.log(err));
-
         },
         deletePost(id) {
 
-            axiosClient.delete(`/postDelete/${id}`).then((res) => {
+            axiosClient.delete(/postDelete/${id}).then((res) => {
                 console.log(res.data);
                 this.$store.dispatch('getPost');
                 this.createToast('deleted post');

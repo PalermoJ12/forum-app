@@ -11,13 +11,36 @@
         <div class="p-2 mx-4 nav-hover-logout " @click="$router.push('/mypost')">
           My Posts
         </div>
-        <div class="p-2 mx-4 nav-hover-logout " @click="$router.push('/logout')">
+        <div class="p-2 mx-4 nav-hover-logout" data-bs-toggle="modal" data-bs-target="#myModalLogOut">
           Logout
         </div>
       </div>
-
     </div>
   </nav>
+  <div class="modal" id="myModalLogOut">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h4 class="modal-title">Confirm</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+            Are you sure you want to log out ?
+        </div>
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success"  @click="$router.push('/logout')" data-bs-dismiss="modal">Confirm</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        </div>
+
+        </div>
+    </div>
+    </div>
 
   <router-view />
 </template>

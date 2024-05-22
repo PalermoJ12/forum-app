@@ -91,6 +91,8 @@
         </CModalFooter>
     </CModal>
 
+
+
     <CModal :visible="visibleDelete" @close="() => { visibleDelete = false }" aria-labelledby="LiveDemoExampleLabel">
         <CModalHeader>
             <CModalTitle id="LiveDemoExampleLabel">Delete a post</CModalTitle>
@@ -108,6 +110,8 @@
 
 <script>
 import axiosClient from '../../axios/axios-js';
+
+
 export default {
 
     name: 'ViewPost',
@@ -141,7 +145,7 @@ export default {
         createToast(content) {
             this.toasts.push({
                 title: 'Success',
-                content: Successfully ${content}.,
+                content: `Successfully ${content}.`,
             })
         },
         updatePost(id) {
@@ -157,7 +161,7 @@ export default {
             this.validation.title = false;
             this.validation.body = false;
 
-            axiosClient.put(/postsUpdate/${id}, this.updatepostdata).then((res) => {
+            axiosClient.put(`/postsUpdate/${id}`, this.updatepostdata).then((res) => {
                 this.$store.state.selectedPost.title = this.updatepostdata.postTitle;
                 this.$store.state.selectedPost.body = this.updatepostdata.postBody;
                 this.visibleUpdate = false;
@@ -167,7 +171,7 @@ export default {
         },
         deletePost(id) {
 
-            axiosClient.delete(/postDelete/${id}).then((res) => {
+            axiosClient.delete(`/postDelete/${id}`).then((res) => {
                 console.log(res.data);
                 this.$store.dispatch('getPost');
                 this.createToast('deleted post');

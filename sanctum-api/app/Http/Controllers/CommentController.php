@@ -38,6 +38,20 @@ class CommentController extends Controller
 
     }
 
+    public function update(Request $request, $id)
+    {
+
+        $comment = Comment::findOrFail($id);
+        $update = $comment->update([
+            'comment_body' => $request->comment_body
+        ]);
+
+        return response([
+            "status" => "Success",
+            "response" => $update
+        ]);
+    }
+
     public function destroy($id)
     {
 

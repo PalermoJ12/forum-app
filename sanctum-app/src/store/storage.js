@@ -52,8 +52,10 @@ const store = createStore({
         .catch((err) => console.log(err));
     },
     updateComment({ commit }, comment) {
-      axiosClient.put(`/comments/${comment.id}`, comment)
+
+      axiosClient.put(`/comment/${comment.id}`, comment)
         .then((res) => {
+
           commit("updateComment", res.data.response);
         })
         .catch((err) => console.log(err));

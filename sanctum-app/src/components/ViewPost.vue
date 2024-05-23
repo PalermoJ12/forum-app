@@ -175,7 +175,6 @@ export default {
     },
     editComment(comment) {
       this.editingCommentId = comment.id;
-      // Store the original comment body before editing
       comment.original_comment_body = comment.comment_body;
     },
     saveComment(comment) {
@@ -195,7 +194,17 @@ export default {
       } else {
         console.log('Input field is empty. Cannot save.');
       }
+    }, deleteComment(comment) {
+      axiosClient.delete(`/commentDelete/${comment.id}`).then((res) => {
+        console.log(res.data);
+        const index = this.posts.comments.findIndex(c => c.id === comment.id);
+        if (index !== -1) {
+          this.posts.comments.splice(index, 1);
+        }
+        this.createToast('deleted comment');
+      }).catch((err) => console.log(err));
     }
+
   },
 };
 
